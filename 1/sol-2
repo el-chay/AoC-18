@@ -1,0 +1,11 @@
+#!/bin/bash
+# Original oneliner
+# (set -e; C=1; while cat input; do let C++; echo pass:$C 1>&2; done | awk '{c+=$1; A[c]++}(A[c] == 2){print c; exit 1}')
+# The file was read 159 times
+# 464 -> found!
+set -e
+let C=1
+while cat input; do
+    let C++
+    echo pass:$C 1>&2
+done | awk '{c+=$1; A[c]++}(A[c] == 2){print c; exit 1}'
