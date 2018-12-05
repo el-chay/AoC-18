@@ -1,0 +1,17 @@
+#!/bin/bash
+# Prepare
+rm data.sqlite
+sqlite3 data.sqlite 'CREATE TABLE fabric (elf varchar, x int, y int)'
+
+# Load data
+time ./tosqlite.pl input | sqlite3 data.sqlite '.import /dev/stdin fabric'
+
+# sqlite did all:
+time sqlite3 data.sqlite 'select count(1) from (select x, y from fabric group by x, y having count(1) > 1)'
+
+# Output: 101469
+
+# real	0m0.186s
+# user	0m0.182s
+# sys	0m0.004s
+
