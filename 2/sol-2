@@ -1,0 +1,4 @@
+#!/bin/bash
+make check-fast
+join -j 2 input input | awk '$1!=$2' | ./check-fast
+# TODO: Reduce the matrix to the lower/upper part
