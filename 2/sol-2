@@ -1,4 +1,43 @@
 #!/bin/bash
-make check-fast
-join -j 2 input input | awk '$1!=$2' | ./check-fast
+# Unix powered
+gcc -o boxid-find boxid-find.c
+time join -j 2 input input | awk '$1!=$2' | ./boxid-find
 # TODO: Reduce the matrix to the lower/upper part
+
+rm part2
+#  SQLite powered
+gcc -o boxid-find boxid-find.c -D SEP='"|"'
+time sqlite3 part2 <<EOF | ./boxid-find
+.output /dev/null
+create table input (name varchar);
+.import input input
+.output
+SELECT a.name, b.name from input a, input b WHERE a.oid != b.oid and a.oid > b.oid;
+EOF
+
+# Without the load, just the query.
+time sqlite3 part2 <<EOF | ./boxid-find
+SELECT a.name, b.name from input a, input b WHERE a.oid != b.oid and a.oid > b.oid;
+EOF
+
+# Times in my machine:
+# Pure unix, complete cross product
+# mkcdflathzwsvjxrevymbdpoq
+#
+# real	0m0.005s
+# user	0m0.010s
+# sys	0m0.000s
+
+# Database help, only matrix upper data
+# mkcdflathzwsvjxrevymbdpoq
+# 
+# real	0m0.018s
+# user	0m0.008s
+# sys	0m0.000s
+
+# Just the query, without considering the table load:
+# mkcdflathzwsvjxrevymbdpoq
+#
+# real	0m0.002s
+# user	0m0.003s
+# sys	0m0.000s
