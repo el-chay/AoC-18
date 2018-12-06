@@ -1,0 +1,13 @@
+#!/bin/bash
+# Second part becomes trivial after first one
+time sqlite3 data.sqlite <<EOF
+SELECT elf FROM FABRIC
+JOIN
+ (SELECT elf, count(1) AS c FROM fabric
+  JOIN (SELECT x, y FROM fabric GROUP BY x,y HAVING count(1) = 1)
+  USING (x,y) GROUP BY elf) AS selection
+USING (elf) GROUP BY elf HAVING count(1) = selection.c;
+EOF
+
+#1067
+# Almost a second.
