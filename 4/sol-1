@@ -1,0 +1,20 @@
+#!/bin/bash
+# Advent of code.
+# Solution 1 for Day 4
+INPUT=${1:-input}
+
+# Transform & sort data into a more Unix friendly format.
+sed 's/[]:[-]//g;' $INPUT | sort -k1,2 > $INPUT.sorted
+
+# Use sleep-calc.pl to "manflinflear" the data.
+./sleep-calc.pl $INPUT.sorted | sort -k1,1 > $INPUT.calculated
+
+# Calculate sleep time, get the most sleeping guard.
+awk '
+old!=$1 { if(ac > acmax){ acmax=ac; id=old } ac=0;old=$1 }
+        {ac+=$2}
+    END {print id}
+' $INPUT.calculated > result
+
+# Eat this ..
+fgrep -wf result input.calculated | cut -f 3,4 | while read i j; do seq $i $j | head -n-1; done | sort | uniq -c | sort -k1,1n | tail -1 | awk '{getline r < "result"; print substr(r, 2) * $2}'
