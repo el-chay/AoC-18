@@ -1,0 +1,7 @@
+#!/bin/bash
+paste -d '' <(printf "%c\n" {a..z}) <(printf "%c\n" {A..Z}) |
+while read U; do
+    perl -pe 's/['$U']//g' input > input.no-$U;
+    ./eater input.no-$U 2>$U.result | wc -c >> $U.result
+done
+tail -q -n 1 *.result | sort

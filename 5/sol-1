@@ -1,0 +1,4 @@
+#!/bin/bash
+gcc -Os -o eater eater.c
+./eater input | wc -c
+# Don't forget to remove 1 (\n) from the total.
